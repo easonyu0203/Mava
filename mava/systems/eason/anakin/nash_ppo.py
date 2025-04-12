@@ -400,7 +400,7 @@ def learner_setup(
 
 def run_experiment(_config: DictConfig) -> float:
     """Runs experiment."""
-    _config.logger.system_name = "ff_ippo"
+    _config.logger.system_name = "nash_ppo"
     config = copy.deepcopy(_config)
 
     n_devices = len(jax.devices())
@@ -524,8 +524,8 @@ def run_experiment(_config: DictConfig) -> float:
 
 
 @hydra.main(
-    config_path="../../../configs/default",
-    config_name="ff_ippo.yaml",
+    config_path="../../../configs/eason",
+    config_name="nash_ppo.yaml",
     version_base="1.2",
 )
 def hydra_entry_point(cfg: DictConfig) -> float:
@@ -535,7 +535,7 @@ def hydra_entry_point(cfg: DictConfig) -> float:
 
     # Run experiment.
     eval_performance = run_experiment(cfg)
-    print(f"{Fore.CYAN}{Style.BRIGHT}IPPO experiment completed{Style.RESET_ALL}")
+    print(f"{Fore.CYAN}{Style.BRIGHT}Nash PPO experiment completed{Style.RESET_ALL}")
     return eval_performance
 
 
