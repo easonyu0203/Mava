@@ -325,7 +325,7 @@ def learner_setup(
     critic_torso = hydra.utils.instantiate(config.network.critic_network.pre_torso)
 
     actor_network = Actor(torso=actor_torso, action_head=actor_action_head)
-    critic_network = Critic(torso=critic_torso)
+    critic_network = Critic(torso=critic_torso, centralised_critic=True)
 
     actor_lr = make_learning_rate(config.system.actor_lr, config)
     critic_lr = make_learning_rate(config.system.critic_lr, config)
@@ -417,13 +417,13 @@ def learner_setup(
 
 def run_experiment(_config: DictConfig) -> float:
     """Runs experiment."""
-    _config.logger.system_name = "nash_ppo"
+    _config.logger.system_name = "nash_ma_ppo"
     config = copy.deepcopy(_config)
 
     n_devices = len(jax.devices())
 
     # Create the enviroments for train and eval.
-    env, eval_env = environments.make(config)
+    env, eval_env = environments.make(config, add_global_state=True)
 
     # PRNG keys.
     key, key_e, actor_net_key, critic_net_key = jax.random.split(
@@ -553,7 +553,7 @@ def run_experiment(_config: DictConfig) -> float:
 
 @hydra.main(
     config_path="../../../configs/eason",
-    config_name="nash_ppo.yaml",
+    config_name="nash_ma_ppo.yaml",
     version_base="1.2",
 )
 def hydra_entry_point(cfg: DictConfig) -> float:
@@ -563,7 +563,7 @@ def hydra_entry_point(cfg: DictConfig) -> float:
 
     # Run experiment.
     eval_performance = run_experiment(cfg)
-    print(f"{Fore.CYAN}{Style.BRIGHT}Nash PPO experiment completed{Style.RESET_ALL}")
+    print(f"{Fore.CYAN}{Style.BRIGHT}Nash MAPPO experiment completed{Style.RESET_ALL}")
     return eval_performance
 
 

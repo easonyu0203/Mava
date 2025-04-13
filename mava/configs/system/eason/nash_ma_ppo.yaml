@@ -1,4 +1,5 @@
-# --- Defaults FF-IPPO ---
+# --- Defaults Nash-MAPPO ---
+
 total_timesteps: ~ # Set the total environment steps.
 # If unspecified, it's derived from num_updates; otherwise, num_updates adjusts based on this value.
 num_updates: 6000 # Number of updates
@@ -19,5 +20,7 @@ gae_lambda: 0.95 # Lambda value for GAE computation.
 clip_eps: 0.2 # Clipping value for PPO updates and value function.
 ent_coef: 0.01 # Entropy regularisation term for loss function.
 vf_coef: 0.5 # Critic weight in
+magnet_coef: 0.1 # Bregman divergence coefficient for Nash IPPO.
+num_update_per_magnet: 100 # Number of updates before we update the magnet.
 max_grad_norm: 0.5 # Maximum norm of the gradients for a weight update.
 decay_learning_rates: False # Whether learning rates should be linearly decayed during training.
