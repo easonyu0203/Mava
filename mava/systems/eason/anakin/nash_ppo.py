@@ -112,6 +112,9 @@ def get_learner_fn(
             traj_batch, last_val, last_done, config.system.gamma, config.system.gae_lambda
         )
 
+        episode_metrics["advantages"] = advantages
+        episode_metrics["targets"] = targets
+
         def _update_epoch(update_state: Tuple, _: Any) -> Tuple:
             """Update the network for a single epoch."""
 
@@ -338,6 +341,11 @@ def learner_setup(
     # Initialise critic params and optimiser state.
     critic_params = critic_network.init(critic_net_key, init_x)
     critic_opt_state = critic_optim.init(critic_params)
+
+    print(critic_network.tabulate(
+        critic_net_key,
+        init_x,
+    ))
 
     # Pack params.
     params = Params(actor_params, critic_params)
