@@ -1,5 +1,5 @@
 defaults:
-  - logger: logger
+  - logger: ff_ippo_logger
   - arch: anakin
   - system: ppo/ff_ippo
   - network: mlp  # [mlp, cnn]

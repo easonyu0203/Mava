@@ -3,6 +3,7 @@
 # All other options are specific to the logger.
 # Custom loggers can be added by creating a new item in the `loggers` dictionary containing `_target_` and `enabled` keys.
 
+system_name: ff_ippo
 base_exp_path: results/
 
 loggers:
@@ -45,7 +46,7 @@ loggers:
 checkpointing:
   save_model: True # Whether to save model checkpoints.
   save_args:
-    save_interval_steps: 1 # Number of steps between saving checkpoints.
+    save_interval_steps: 1638400 # Number of steps between saving checkpoints.
     max_to_keep: 10 # Maximum number of checkpoints to keep.
     keep_period: ~ # Don't delete any checkpoint where step % keep_period == 0
     checkpoint_uid: "main" # Unique identifier for checkpoint to save. Defaults to timestamp
