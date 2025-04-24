@@ -349,6 +349,7 @@ class SmaxWrapper(JaxMarlWrapper):
         self.is_self_play = self._env.num_agents == (self._env.num_allies + self._env.num_enemies)
         # team id
         self.team_id = jnp.zeros(self._env.num_allies, dtype=jnp.float32)
+        self.team0_indices = jnp.arange(self._env.num_allies, dtype=jnp.int32)
         if self.is_self_play:
             self.team_id = jnp.concatenate(
                 [
@@ -356,6 +357,8 @@ class SmaxWrapper(JaxMarlWrapper):
                     jnp.ones(self._env.num_enemies, dtype=jnp.float32)    # Team 1 for enemies
                 ]
             )
+            self.team1_indices = jnp.arange(self._env.num_allies, self._env.num_agents, dtype=jnp.int32)
+        
 
     def reset(
         self, key: PRNGKey
