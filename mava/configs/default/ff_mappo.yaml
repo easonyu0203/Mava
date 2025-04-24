@@ -1,9 +1,9 @@
 defaults:
-  - logger: logger
+  - logger: ff_mappo_logger
   - arch: anakin
   - system: ppo/ff_mappo
   - network: mlp # [mlp, cnn]
-  - env: rware # [cleaner, connector, vector-connector, gigastep, lbf, mabrax, matrax, rware, smax, mpe]
+  - env: smax # [cleaner, connector, vector-connector, gigastep, lbf, mabrax, matrax, rware, smax, mpe]
   - _self_
 
 hydra:

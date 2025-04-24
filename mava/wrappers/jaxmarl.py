@@ -267,7 +267,7 @@ class JaxMarlWrapper(Wrapper, ABC):
 
         if self.has_global_state:
             global_state = specs.Array(
-                (self.num_agents, self.state_size),
+                (self.num_agents, self.state_size + 1), # 1 for team id
                 agents_view.dtype,
                 "global_state",
             )
@@ -345,6 +345,18 @@ class SmaxWrapper(JaxMarlWrapper):
         super().__init__(env, has_global_state, env.max_steps)
         self._env: SMAX
 
+        # if we control all agents (both allies and enemies) we are in self-play mode
+        self.is_self_play = self._env.num_agents == (self._env.num_allies + self._env.num_enemies)
+        # team id
+        self.team_id = jnp.zeros(self._env.num_allies, dtype=jnp.float32)
+        if self.is_self_play:
+            self.team_id = jnp.concatenate(
+                [
+                    jnp.zeros(self._env.num_allies, dtype=jnp.float32),  # Team 0 for allies
+                    jnp.ones(self._env.num_enemies, dtype=jnp.float32)    # Team 1 for enemies
+                ]
+            )
+
     def reset(
         self, key: PRNGKey
     ) -> Tuple[JaxMarlState, TimeStep[Union[Observation, ObservationGlobalState]]]:
@@ -380,7 +392,14 @@ class SmaxWrapper(JaxMarlWrapper):
 
     def get_global_state(self, wrapped_env_state: Any, obs: Dict[str, Array]) -> Array:
         """Get global state from observation and copy it for each agent."""
-        return jnp.tile(jnp.array(obs["world_state"]), (self.num_agents, 1))
+        world_state = jnp.array(obs["world_state"])
+        # Tile the world state for each agent
+        tiled_world_state = jnp.tile(world_state, (self.num_agents, 1))
+        # Append the team ID for each agent (reshape team_id to (num_agents, 1))
+        team_ids = self.team_id.reshape(-1, 1)
+        # Concatenate world state and team ID along the last dimension
+        global_state = jnp.concatenate([tiled_world_state, team_ids], axis=-1)
+        return global_state
 
 
 class MabraxWrapper(JaxMarlWrapper):

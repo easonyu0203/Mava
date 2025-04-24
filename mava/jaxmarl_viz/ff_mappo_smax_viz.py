@@ -71,7 +71,7 @@ def play_episode(
 
 @hydra.main(
     config_path="../configs/default",
-    config_name="ff_ippo.yaml",
+    config_name="ff_mappo.yaml",
     version_base="1.2",
 )
 def main(cfg: DictConfig) -> None:
@@ -83,7 +83,7 @@ def main(cfg: DictConfig) -> None:
     
     # Initialize actor network
     actor_torso = hydra.utils.instantiate(cfg.network.actor_network.pre_torso)
-    env, _ = environments.make(cfg)
+    env, _ = environments.make(config=cfg, add_global_state=True)
     action_head, _ = get_action_head(env.action_spec)
     actor_action_head = hydra.utils.instantiate(action_head, action_dim=env.action_dim)
     actor_network = Actor(torso=actor_torso, action_head=actor_action_head)
@@ -117,7 +117,7 @@ def main(cfg: DictConfig) -> None:
 
     # visualize the episode
     viz = SMAXVisualizer(env, state_seq)
-    viz.animate(view=False, save_fname= pathlib.Path(cfg.logger.base_exp_path) / "output.gif")
+    viz.animate(view=False, save_fname= pathlib.Path(cfg.logger.base_exp_path) / "smax_viz.gif")
     
 
 if __name__ == "__main__":
